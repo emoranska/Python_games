@@ -16,6 +16,9 @@ def guess_number_2(user_number):
         elif guess < user_number:
             min = guess
             print('Za mało!')
+            if not guess < user_number:
+                print('Nie oszukuj!')
+                return
 
     print(f'Zgadłeś! {guess} było poprawną liczbą.')
 
