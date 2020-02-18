@@ -1,45 +1,74 @@
-from flask import Flask, request
+from flask import Flask
 
 app = Flask(__name__)
 
-def get_form():
+min_value = None
+max_value = None
+guess = None
+
+
+def comp_guess(feedback):
+    global max_value, min_value, guess
+
+    if max_value - min_value <= 1:
+        raise Exception("You are not fair")
+
+    if feedback == -1:
+        max_value = guess
+    else:
+        min_value = guess
+    return int((max_value + min_value) / 2)
+
+
+def reset_parameters():
+    global min_value, max_value, guess
+    min_value = 0
+    max_value = 1000
+    guess = int((max_value + min_value) / 2)
+
+
+def get_control_view():
     return """
-    <form action="/<user_number>" method="POST">
-    <label><input name="more" type="submit" value="więcej"></label>
-    <label><input name="less" type="submit" value="mniej"></label>
-    <label><input name="correct" type="submit" value="trafiłeś"></label>
-    <label><input type="hidden" name="min" value="0"></label>
-    <label><input type="hidden" name="max" value="1000"></label>
-    </form>
+    <li><a href="/try_more">Too low</a></li>
+    <li><a href="/try_less">Too high</a></li>
+    <li><a href="/success">Congratulations</a></li>
     """
 
-@app.route("/<user_number>", methods=["GET","POST"])
-def main_route(user_number):
 
-    if request.method == "POST":
+def get_feedback_view():
+    return "<p>My guess {}</p>"
 
-        guess = 500
-        max = request.form.get("max", int)
-        min = request.form.get("min", int)
 
-        while guess != user_number:
-            print(f'Zgaduję: {guess}')
-            guess = int((max - min) / 2) + min
+@app.route("/")
+def main_page():
+    return get_control_view() + get_feedback_view().format(guess)
 
-            if guess > user_number:
-                max = guess
-                print("Za dużo!")
-                return get_form()
 
-            if guess < user_number:
-                min = guess
-                print('Za mało!')
-                return get_form()
+@app.route("/try_more")
+def more_page():
+    global guess
+    try:
+        guess = comp_guess(1)
+    except Exception:
+        return "You are not fair"
 
-            if guess == user_number:
-                print(f'Zgadłeś! {guess} było poprawną liczbą.')
+    return get_control_view() + get_feedback_view().format(guess)
 
-    else:
-        return get_form()
 
+@app.route("/try_less")
+def less_page():
+    global guess
+    try:
+        guess = comp_guess(-1)
+    except Exception:
+        return "You are not fair"
+
+    return get_control_view() + get_feedback_view().format(guess)
+
+
+@app.route("/success")
+def success_page():
+    return get_control_view() + get_feedback_view().format(guess) + "<p>Yupi!</p>"
+
+reset_parameters()
 app.run()
