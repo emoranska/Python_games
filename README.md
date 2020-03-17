@@ -32,9 +32,9 @@ Dice code:
 #### xDy+z
 
 where:
-* __y__ dice kind (e.g. D3, D4, D6, D8, D10, D12, D20 or D100),
-* __x__ number of dice rolls; ignored, if 1,
-* __z__ number which has to be added (or deducted) to the result (optional).
+* __y__ - dice kind (e.g. D3, D4, D6, D8, D10, D12, D20 or D100),
+* __x__ - number of dice rolls; ignored, if 1,
+* __z__ - number which has to be added (or deducted) to the result (optional).
 
 
 # Technology
