@@ -38,5 +38,5 @@ where:
 
 
 # Technology
-python3
-Flask
+- python3
+- Flask
